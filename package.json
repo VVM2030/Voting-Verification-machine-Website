@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "echo \"# Online Voting Verification Project\" > README.md",
   "main": "server.js",
-  "scripts": {
-  "start": "npx http-server",
-},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VVM2030/Voting-Verification-machine-Website.git"
