@@ -157,7 +157,7 @@
         };
 
         try {
-          const response = await fetch('http://localhost:3001/addCandidate', {
+          const response = await fetch('https://voting-verification-machine-u49e.onrender.com/addCandidate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(candidateData)

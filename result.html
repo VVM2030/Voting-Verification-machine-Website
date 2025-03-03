@@ -115,7 +115,7 @@
     const resultsContainer = document.getElementById("renderTable");
 
     try {
-        const phaseResponse = await fetch("http://localhost:3001/api/currentPhase");
+        const phaseResponse = await fetch("https://voting-verification-machine-u49e.onrender.com/api/currentPhase");
         const phaseData = await phaseResponse.json();
         
         if (phaseData.phase !== "result") {
@@ -127,7 +127,7 @@
         notOverMessage.style.display = "none";
         resultsContainer.style.display = "block";
 
-        const response = await fetch("http://localhost:3001/resultcandidates");
+        const response = await fetch("https://voting-verification-machine-u49e.onrender.com/resultcandidates");
         const candidates = await response.json();
 
         if (candidates.length === 0) {

@@ -118,7 +118,7 @@
 
         async function fetchPhase() {
             try {
-                const response = await fetch("http://localhost:3001/api/currentPhase");
+                const response = await fetch("https://voting-verification-machine-u49e.onrender.com/api/currentPhase");
                 const data = await response.json();
                 const phase = data.phase || "registration";
 
@@ -162,7 +162,7 @@
             return;
             }
 
-            const checkMinorResponse = await fetch("http://localhost:3001/api/checkIsMinor", {
+            const checkMinorResponse = await fetch("https://voting-verification-machine-u49e.onrender.com/api/checkIsMinor", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ aadharNo: aadhaarNumber }),
@@ -175,7 +175,7 @@
             return;
             }
 
-            const response = await fetch("http://localhost:3001/api/validateUser", {
+            const response = await fetch("https://voting-verification-machine-u49e.onrender.com/api/validateUser", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ aadharNo: aadhaarNumber, accountAddress: userAddress, candidateId }),
