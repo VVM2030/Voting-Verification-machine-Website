@@ -8,7 +8,7 @@
     <title>VVM Admin Dashboard</title>
 
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
-    <!--     Fonts and icons     -->
+    <!-- Fonts and icons -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <!-- CSS Files -->
@@ -17,7 +17,7 @@
 
 <body>
 
-    <div class="wrapper ">
+    <div class="wrapper">
         <div class="sidebar" data-color="green" data-background-color="white" data-image="./assets/img/sidebar-1.jpg">
             <div class="sidebar-wrapper">
               <ul class="nav" style="margin-top: 50px;">
@@ -45,7 +45,7 @@
                     <p>Change Phase</p>
                   </a>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item">
                   <a class="nav-link" href="index.html">
                     <i class="material-icons">logout</i>
                     <p>LogOut</p>
@@ -54,18 +54,13 @@
               </ul>
             </div>
         </div>
+
         <div class="main-panel">
-          <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+          <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top">
             <div class="container-fluid">
               <div class="navbar-wrapper">
                 <a class="navbar-brand" href="javascript:;"></a>
               </div>
-              <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="navbar-toggler-icon icon-bar"></span>
-                <span class="navbar-toggler-icon icon-bar"></span>
-                <span class="navbar-toggler-icon icon-bar"></span>
-              </button>
             </div>
           </nav>
     
@@ -78,113 +73,116 @@
                       <h4 class="card-title">Voter Registration</h4>
                     </div>
                     <div class="card-body">
-                        <div>
-                            <table class="table">
-                                <tr>
-                                    <th>S.N</th>
-                                    <th>Account address</th>
-                                    <th>Is registered</th>
-                
-                                </tr>  
-                            </table>
-                        </div>
-                        <form onsubmit="App.registerVoter(); return false;">
-                            <div class="form-group">
-                              <br>
-                              <input type="text" class="form-control" id="accadd" placeholder="Please Enter Voter Account Address here.." required>
-                            </div>
+                      <!-- Voter List Table -->
+                      <div>
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>S.N</th>
+                                      <th>Account Address</th>
+                                      <th>Is Registered</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <!-- Fetched voter data will be inserted here -->
+                              </tbody>
+                          </table>
+                      </div>
+
+                      <!-- Registration Form -->
+                      <form id="voterForm">
+                          <div class="form-group">
                             <br>
-                            <button type="submit" class="btn btn-success">Register</button>
-                        </form>
+                            <input type="text" class="form-control" id="accadd" placeholder="Please Enter Voter Account Address here.." required>
+                          </div>
+                          <br>
+                          <button type="submit" class="btn btn-success">Register</button>
+                      </form>
+
+                      <!-- Message for registration status -->
+                      <p id="message" style="font-weight: bold;"></p>
+
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
         </div>
-      </div>
-      </div>
+    </div>
 
 <script>
 
-        async function fetchRegisteredUsers() {
-          try {
-            const response = await fetch("https://voting-verification-machine-u49e.onrender.com/getRegisteredUsers");
-            const registeredUsers = await response.json();
+  async function fetchRegisteredUsers() {
+    try {
+      const response = await fetch("https://voting-verification-machine-u49e.onrender.com/getRegisteredUsers");
+      const registeredUsers = await response.json();
 
-            const tableBody = document.querySelector("table tbody");
-            tableBody.innerHTML = ""; 
+      const tableBody = document.querySelector(".table tbody");
+      tableBody.innerHTML = ""; // Clear existing table rows
 
-            registeredUsers.forEach((user, index) => {
-              const row = document.createElement("tr");
+      registeredUsers.forEach((user, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${user.accountAddress}</td>
+          <td>${user.isVerified ? "Yes" : "No"}</td>
+        `;
+        tableBody.appendChild(row);
+      });
 
-              row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${user.accountAddress}</td>
-                <td>${user.isVerified ? "Yes" : "No"}</td>
-              `;
-
-              tableBody.appendChild(row);
-            });
-          } catch (error) {
-            console.error("Error fetching registered users:", error);
-          }
-        }
-
-        async function registerVoter() {
-          const accountAddress = document.getElementById('accadd').value.trim();
-          
-          const response = await fetch("https://voting-verification-machine-u49e.onrender.com/getRegisteredUsers");
-          const registeredUsers = await response.json();
-          
-          let isRegistered = false;
-
-          registeredUsers.forEach(user => {
-            if (user.accountAddress === accountAddress) {
-              isRegistered = true;
-            }
-          });
-
-          let messageElement = document.querySelector('.card-body p');
-          if (!messageElement) {
-            messageElement = document.createElement('p');
-            document.querySelector('.card-body').appendChild(messageElement);
-          }
-
-          if (isRegistered) {
-            messageElement.style.color = 'green';
-            messageElement.innerHTML = `User registered successfully with account: ${accountAddress}`;
-          } else {
-            messageElement.style.color = 'red';
-            messageElement.innerHTML = 'User is not registered';
-          }
-
-          document.getElementById('accadd').value = '';
-        }
-
-        document.querySelector('form').addEventListener('submit', (e) => {
-          e.preventDefault();
-          registerVoter(); 
+      // Add click event to each row to populate the input field
+      document.querySelectorAll(".table tbody tr").forEach(row => {
+        row.addEventListener("click", () => {
+          document.getElementById("accadd").value = row.cells[1].innerText;
         });
+      });
 
-        document.addEventListener("DOMContentLoaded", fetchRegisteredUsers);
+    } catch (error) {
+      console.error("Error fetching registered users:", error);
+    }
+  }
 
-          document.querySelectorAll('.table tr').forEach((row) => {
-          row.addEventListener('click', () => {
-            const accountAddress = row.cells[1].innerText;
-            document.getElementById('accadd').value = accountAddress;
-          });
-        });
+  async function registerVoter() {
+    const accountAddress = document.getElementById('accadd').value.trim();
+    
+    if (!accountAddress) {
+      showMessage("Please enter a valid account address", "red");
+      return;
+    }
 
-        document.querySelector('form').addEventListener('submit', (e) => {
-          e.preventDefault();
+    try {
+      const response = await fetch("https://voting-verification-machine-u49e.onrender.com/getRegisteredUsers");
+      const registeredUsers = await response.json();
+      
+      const isRegistered = registeredUsers.some(user => user.accountAddress === accountAddress);
 
-          const accountAddress = document.getElementById('accadd').value.trim();
-          document.querySelector('.card-body').insertAdjacentHTML(
-            'beforeend',
-            `<p style="color: green;">User registered successfully with account: ${accountAddress}</p>`
-          );
-        });
+      if (isRegistered) {
+        showMessage(`User registered successfully with account: ${accountAddress}`, "green");
+      } else {
+        showMessage("User is not registered", "red");
+      }
+
+    } catch (error) {
+      console.error("Error checking user registration:", error);
+      showMessage("An error occurred. Please try again.", "red");
+    }
+
+    document.getElementById('accadd').value = ''; 
+  }
+
+  function showMessage(message, color) {
+    const messageElement = document.getElementById("message");
+    messageElement.textContent = message;
+    messageElement.style.color = color;
+  }
+
+  document.getElementById("voterForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    registerVoter(); 
+  });
+
+  document.addEventListener("DOMContentLoaded", fetchRegisteredUsers);
 
 </script>
 
