@@ -116,37 +116,47 @@
     
 </body>
 <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("registerForm").addEventListener("submit", async function (e) {
+       document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("registerForm")?.addEventListener("submit", async function (e) {
         e.preventDefault();
         console.log("Form submitted");
-        const aadharNo = document.getElementById("aadharNo").value;
-        const accountAddress = document.getElementById("accountAddress").value; 
-        const email = localStorage.getItem('email');
+
+        const aadharNo = document.getElementById("aadharNo")?.value.trim();
+        const accountAddress = document.getElementById("accountAddress")?.value.trim(); 
+        const email = localStorage.getItem("email");
+        const messageElement = document.getElementById("message");
 
         console.log({ aadharNo, accountAddress, email });
 
+        if (!aadharNo || !accountAddress) {
+            messageElement.innerText = "All fields are required.";
+            messageElement.style.color = "red";
+            return;
+        }
+
         const aadharRegex = /^\d{12}$/; 
         const accountRegex = /^0x[a-fA-F0-9]{40}$/; 
+        
         if (!aadharRegex.test(aadharNo)) {
-            document.getElementById("message").innerText = "Invalid Aadhar number format.";
-            document.getElementById("message").style.color = "red";
+            messageElement.innerText = "Invalid Aadhar number format.";
+            messageElement.style.color = "red";
             return;
         }
 
         if (!accountRegex.test(accountAddress)) {
-            document.getElementById("message").innerText = "Invalid MetaMask account address.";
-            document.getElementById("message").style.color = "red";
+            messageElement.innerText = "Invalid MetaMask account address.";
+            messageElement.style.color = "red";
             return;
         }
 
         if (!email) {
             console.error("Email not found in localStorage.");
-            document.getElementById("message").innerText = "User email not found. Please log in again.";
+            messageElement.innerText = "User email not found. Please log in again.";
+            messageElement.style.color = "red";
             return;
-            }
+        }
 
-            try {
+        try {
             const response = await fetch("https://voting-verification-machine-u49e.onrender.com/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -155,41 +165,44 @@
 
             const data = await response.json();
 
-        if (response.ok) {
-            if (data.redirect) {
-            window.location.href = data.redirect;
+            if (response.ok) {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    setTimeout(() => {
+                        alert("OTP sent successfully to your Gmail");
+                        window.location.href = "emailverify.html";
+                    }, 1000);
+                }
             } else {
-            setTimeout(() => {
-                alert("otp sent successfully to your gmail")
-                window.location.href = "emailverify.html";
-            }, 1000);
+                messageElement.innerText = data.message || "An error occurred.";
+                messageElement.style.color = "red";
             }
-        } else {
-            document.getElementById("message").innerText = data.message;
-        }
         } catch (error) {
-        console.error("Error during fetch:", error);
-        document.getElementById("message").innerText = "An error occurred.";
+            console.error("Error during fetch:", error);
+            messageElement.innerText = "A network error occurred. Please try again.";
+            messageElement.style.color = "red";
         }
     });
-    });
+});
 
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-            }
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
-        window.onload = () => {
-        const message = getQueryParam('message');
-        
-        if (message === 'success') {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            setTimeout(() => {
-            successMessage.style.display = 'none';
-            }, 3000); 
-        }
-        }
+window.onload = () => {
+    const message = getQueryParam("message");
+    const successMessage = document.getElementById("successMessage");
+    
+    if (message === "success" && successMessage) {
+        successMessage.style.display = "block";
+        setTimeout(() => {
+            successMessage.style.display = "none";
+        }, 3000); 
+    }
+};
+
 
 </script>
 </html>
