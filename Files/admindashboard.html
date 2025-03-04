@@ -73,7 +73,6 @@
                       <h4 class="card-title">Voter Registration</h4>
                     </div>
                     <div class="card-body">
-                      <!-- Voter List Table -->
                       <div>
                           <table class="table">
                               <thead>
@@ -84,12 +83,11 @@
                                   </tr>
                               </thead>
                               <tbody>
-                                  <!-- Fetched voter data will be inserted here -->
+                                 
                               </tbody>
                           </table>
                       </div>
 
-                      <!-- Registration Form -->
                       <form id="voterForm">
                           <div class="form-group">
                             <br>
@@ -99,7 +97,6 @@
                           <button type="submit" class="btn btn-success">Register</button>
                       </form>
 
-                      <!-- Message for registration status -->
                       <p id="message" style="font-weight: bold;"></p>
 
                     </div>
@@ -119,7 +116,7 @@
       const registeredUsers = await response.json();
 
       const tableBody = document.querySelector(".table tbody");
-      tableBody.innerHTML = ""; // Clear existing table rows
+      tableBody.innerHTML = ""; 
 
       registeredUsers.forEach((user, index) => {
         const row = document.createElement("tr");
@@ -131,7 +128,6 @@
         tableBody.appendChild(row);
       });
 
-      // Add click event to each row to populate the input field
       document.querySelectorAll(".table tbody tr").forEach(row => {
         row.addEventListener("click", () => {
           document.getElementById("accadd").value = row.cells[1].innerText;
